@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+project.ext.lwjglVersion = "3.3.3"
+
+group = 'com.ferra13671'
+version = '1.0.2'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    compileOnly platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+
+
+    compileOnly "org.lwjgl:lwjgl"
+    compileOnly "org.lwjgl:lwjgl-opengl"
+    compileOnly "org.lwjgl:lwjgl-stb"
+}
+
+test {
+    useJUnitPlatform()
+}
