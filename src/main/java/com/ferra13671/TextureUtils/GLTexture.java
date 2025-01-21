@@ -32,6 +32,10 @@ public class GLTexture {
     private int width;
     private int height;
 
+    protected GLTexture() {
+        GLTextureSystem.ALL_TEXTURES.add(this);
+    }
+
     private GLTexture _fromPath(String path, PathMode pathMode, ColorMode colorMode) {
         try {
             InputStream stream;
@@ -70,7 +74,7 @@ public class GLTexture {
             int[] pixels = new int[bufferedImage.getWidth() * bufferedImage.getHeight()];
             bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), pixels, 0, bufferedImage.getWidth());
 
-            ByteBuffer byteBuffer = ByteBuffer.allocateDirect((bufferedImage.getWidth() * bufferedImage.getHeight() * 4));
+            ByteBuffer byteBuffer = MemoryUtil.memAlloc((bufferedImage.getWidth() * bufferedImage.getHeight() * 4));
 
             for (int y = 0; y < bufferedImage.getHeight(); y++) {
                 for (int x = 0; x < bufferedImage.getWidth(); x++) {
@@ -201,6 +205,7 @@ public class GLTexture {
      */
     public GLTexture deleteTexture() {
         glController.deleteTexture(texId);
+        GLTextureSystem.ALL_TEXTURES.remove(this);
         return null;
     }
 

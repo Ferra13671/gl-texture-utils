@@ -3,12 +3,16 @@ package com.ferra13671.TextureUtils;
 import com.ferra13671.TextureUtils.Controller.DefaultGlController;
 import com.ferra13671.TextureUtils.Controller.GlController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Ferra13671
  * @LastUpdate 1.0
  */
 
 public class GLTextureSystem {
+    protected static final List<GLTexture> ALL_TEXTURES = new ArrayList<>();
     /**
      * If you are using lwjgl that is not 3.3.3, or if you are using a modified
      * version of lwjgl (as in Minecraft), then some methods may be slightly different,
@@ -20,5 +24,10 @@ public class GLTextureSystem {
 
     public static void setGlController(GlController controller) {
         glController = controller;
+    }
+
+    public static void close() {
+        ALL_TEXTURES.forEach(GLTexture::deleteTexture);
+        ALL_TEXTURES.clear();
     }
 }
