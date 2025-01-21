@@ -3,8 +3,8 @@ package com.ferra13671.TextureUtils;
 import com.ferra13671.TextureUtils.Controller.DefaultGlController;
 import com.ferra13671.TextureUtils.Controller.GlController;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Ferra13671
@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 public class GLTextureSystem {
-    protected static final List<GLTexture> ALL_TEXTURES = new ArrayList<>();
+    protected static final List<GLTexture> ALL_TEXTURES = new CopyOnWriteArrayList<>();
     /**
      * If you are using lwjgl that is not 3.3.3, or if you are using a modified
      * version of lwjgl (as in Minecraft), then some methods may be slightly different,
