@@ -8,11 +8,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Ferra13671
- * @LastUpdate 1.0
+ * @LastUpdate 1.3
  */
 
 public class GLTextureSystem {
-    protected static final List<GLTexture> ALL_TEXTURES = new CopyOnWriteArrayList<>();
+    protected static final List<GlTex> ALL_TEXTURES = new CopyOnWriteArrayList<>();
     /**
      * If you are using lwjgl that is not 3.3.3, or if you are using a modified
      * version of lwjgl (as in Minecraft), then some methods may be slightly different,
@@ -27,7 +27,7 @@ public class GLTextureSystem {
     }
 
     public static void close() {
-        ALL_TEXTURES.forEach(GLTexture::deleteTexture);
+        ALL_TEXTURES.forEach(GlTex::delete);
         ALL_TEXTURES.clear();
     }
 }

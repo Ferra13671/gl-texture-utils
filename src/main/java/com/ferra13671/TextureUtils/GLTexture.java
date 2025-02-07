@@ -23,10 +23,10 @@ import static org.lwjgl.stb.STBImage.nstbi_image_free;
 
 /**
  * @author Ferra13671
- * @LastUpdate 1.1
+ * @LastUpdate 1.3
  */
 
-public class GLTexture {
+public class GLTexture implements GlTex {
     private int texId;
 
     private int width;
@@ -200,31 +200,34 @@ public class GLTexture {
     /**
      * Removes the texture from video memory and returns null.
      * Use this for times when the texture is no longer needed to free up some video memory.
-     *
-     * @return   null.
      */
-    public GLTexture deleteTexture() {
+    @Override
+    public void delete() {
         glController.deleteTexture(texId);
         GLTextureSystem.ALL_TEXTURES.remove(this);
-        return null;
     }
 
+    @Override
     public void bind() {
         glController.bindTexture(getTexId());
     }
 
+    @Override
     public void unBind() {
         glController.bindTexture(0);
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
 
+    @Override
     public int getTexId() {
         return this.texId;
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
