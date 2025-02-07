@@ -25,7 +25,7 @@
 
 package com.ferra13671.TextureUtils.GifUtils.gif;
 
-import com.ferra13671.GifCutter.common.ReaderUtil;
+import com.ferra13671.TextureUtils.GifUtils.common.ReaderUtil;
 
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
