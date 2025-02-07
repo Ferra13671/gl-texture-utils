@@ -81,6 +81,14 @@ public class GLGif implements GlTex {
         return currentTexture.getHeight();
     }
 
+    public int getUpdateDelayMillis() {
+        return updateDelayMillis;
+    }
+
+    public void setUpdateDelayMillis(int updateDelayMillis) {
+        this.updateDelayMillis = updateDelayMillis;
+    }
+
     public static GLGif fromFile(File file, DecompileMode decompileMode, int updateDelayMillis) {
         try {
             GLGif glGif = new GLGif();
