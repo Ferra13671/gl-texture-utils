@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * @author Ferra13671
- * @LastUpdate 1.3
+ * @LastUpdate 1.3.1
  */
 
 public class GLGif implements GlTex {
