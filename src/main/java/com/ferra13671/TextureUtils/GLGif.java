@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * @author Ferra13671
- * @LastUpdate 1.3.1
+ * @LastUpdate 1.4
  */
 
 public class GLGif implements GlTex {
@@ -35,7 +35,7 @@ public class GLGif implements GlTex {
         else images = GifUtils.decompileFull(iis);
 
         for (BufferedImage bufferedImage : images) {
-            textures.add(GLTexture.fromBufferedImage(bufferedImage));
+            textures.add(GLTexture.fromBufferedImage(bufferedImage, false));
         }
         iterator = textures.iterator();
     }

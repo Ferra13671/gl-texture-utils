@@ -2,6 +2,7 @@ package com.ferra13671.TextureUtils;
 
 import com.ferra13671.TextureUtils.Controller.DefaultGlController;
 import com.ferra13671.TextureUtils.Utils.StreamUtils;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -23,7 +24,7 @@ import static org.lwjgl.stb.STBImage.nstbi_image_free;
 
 /**
  * @author Ferra13671
- * @LastUpdate 1.3
+ * @LastUpdate 1.4
  */
 
 public class GLTexture implements GlTex {
@@ -36,7 +37,7 @@ public class GLTexture implements GlTex {
         GLTextureSystem.ALL_TEXTURES.add(this);
     }
 
-    private GLTexture _fromPath(String path, PathMode pathMode, ColorMode colorMode) {
+    private GLTexture _fromPath(String path, PathMode pathMode, ColorMode colorMode, boolean smoothing) {
         try {
             InputStream stream;
             if (pathMode == PathMode.INSIDEJAR)
@@ -44,30 +45,30 @@ public class GLTexture implements GlTex {
             else
                 stream = Files.newInputStream(Paths.get(path));
 
-            _fromInputStream(stream, colorMode);
+            _fromInputStream(stream, colorMode, smoothing);
         } catch (IOException e) {
-            _fromBufferedImage(genNotFoundBufferedImage());
+            _fromBufferedImage(genNotFoundBufferedImage(), smoothing);
         }
         return this;
     }
 
-    private GLTexture _fromInputStream(InputStream stream, ColorMode colorMode) {
+    private GLTexture _fromInputStream(InputStream stream, ColorMode colorMode, boolean smoothing) {
         try {
             glController.run(() -> {
                 texId = glController.genTexId();
                 try {
-                    genImage(stream, colorMode);
+                    genImage(stream, colorMode, smoothing);
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to generate a GL texture");
                 }
             });
         } catch (Exception e) {
-            _fromBufferedImage(genNotFoundBufferedImage());
+            _fromBufferedImage(genNotFoundBufferedImage(), smoothing);
         }
         return this;
     }
 
-    private GLTexture _fromBufferedImage(BufferedImage bufferedImage) {
+    private GLTexture _fromBufferedImage(BufferedImage bufferedImage, boolean smoothing) {
         glController.run(() -> {
             texId = glController.genTexId();
 
@@ -91,17 +92,18 @@ public class GLTexture implements GlTex {
             this.height = bufferedImage.getHeight();
 
             glController.bindTexture(texId);
-            glController.texParameter(3553, 33085, 0);
-            glController.texParameter(3553, 33082, 0);
-            glController.texParameter(3553, 33083, 0);
-            glController.texParameter(3553, 34049, 0.0F);
+            glController.texParameter(GL11.GL_TEXTURE_2D, 33085, 0);
+            glController.texParameter(GL11.GL_TEXTURE_2D, 33082, 0);
+            glController.texParameter(GL11.GL_TEXTURE_2D, 33083, 0);
+            glController.texParameter(GL11.GL_TEXTURE_2D, 34049, 0.0F);
+            applyFilter(smoothing);
 
-            glController.texImage2D(3553, 0, DefaultGlController.GL_RGBA, width, height, 0, DefaultGlController.GL_RGBA, 5121, null);
-            glController.pixelStore(3314, 0);
-            glController.pixelStore(3316, 0);
-            glController.pixelStore(3315, 0);
-            glController.pixelStore(3317, 4);
-            glController.texSubImage2D(3553, 0, 0, 0, width, height, DefaultGlController.GL_RGBA, 5121, MemoryUtil.memAddress(byteBuffer));
+            glController.texImage2D(GL11.GL_TEXTURE_2D, 0, DefaultGlController.GL_RGBA, width, height, 0, DefaultGlController.GL_RGBA, 5121, null);
+            glController.pixelStore(GL11.GL_UNPACK_ROW_LENGTH, 0);
+            glController.pixelStore(GL11.GL_UNPACK_SKIP_PIXELS, 0);
+            glController.pixelStore(GL11.GL_UNPACK_SKIP_ROWS, 0);
+            glController.pixelStore(GL11.GL_UNPACK_ALIGNMENT, 4);
+            glController.texSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, DefaultGlController.GL_RGBA, 5121, MemoryUtil.memAddress(byteBuffer));
 
             glController.bindTexture(0);
 
@@ -110,7 +112,7 @@ public class GLTexture implements GlTex {
         return this;
     }
 
-    private void genImage(InputStream stream, ColorMode colorMode) throws IOException {
+    private void genImage(InputStream stream, ColorMode colorMode, boolean smoothing) throws IOException {
         ByteBuffer buffer = StreamUtils.readStream(stream);
         buffer.rewind();
         tryGenerate(buffer, stream, memoryStack -> {
@@ -125,17 +127,18 @@ public class GLTexture implements GlTex {
                 this.height = yBuffer.get(0);
 
                 glController.bindTexture(texId);
-                glController.texParameter(3553, 33085, 0);
-                glController.texParameter(3553, 33082, 0);
-                glController.texParameter(3553, 33083, 0);
-                glController.texParameter(3553, 34049, 0.0F);
+                glController.texParameter(GL11.GL_TEXTURE_2D, 33085, 0);
+                glController.texParameter(GL11.GL_TEXTURE_2D, 33082, 0);
+                glController.texParameter(GL11.GL_TEXTURE_2D, 33083, 0);
+                glController.texParameter(GL11.GL_TEXTURE_2D, 34049, 0.0F);
+                applyFilter(smoothing);
 
-                glController.texImage2D(3553, 0, colorMode == ColorMode.RGBA ? DefaultGlController.GL_RGBA : DefaultGlController.GL_RGB, width, height, 0, colorMode == ColorMode.RGBA ? DefaultGlController.GL_RGBA : DefaultGlController.GL_RGB, 5121, null);
-                glController.pixelStore(3314, 0);
-                glController.pixelStore(3316, 0);
-                glController.pixelStore(3315, 0);
-                glController.pixelStore(3317, colorMode == ColorMode.RGBA ? 4 : 3);
-                glController.texSubImage2D(3553, 0, 0, 0, width, height, colorMode == ColorMode.RGBA ? DefaultGlController.GL_RGBA : DefaultGlController.GL_RGB, 5121, MemoryUtil.memAddress(byteBuffer));
+                glController.texImage2D(GL11.GL_TEXTURE_2D, 0, colorMode == ColorMode.RGBA ? DefaultGlController.GL_RGBA : DefaultGlController.GL_RGB, width, height, 0, colorMode == ColorMode.RGBA ? DefaultGlController.GL_RGBA : DefaultGlController.GL_RGB, 5121, null);
+                glController.pixelStore(GL11.GL_UNPACK_ROW_LENGTH, 0);
+                glController.pixelStore(GL11.GL_UNPACK_SKIP_PIXELS, 0);
+                glController.pixelStore(GL11.GL_UNPACK_SKIP_ROWS, 0);
+                glController.pixelStore(GL11.GL_UNPACK_ALIGNMENT, colorMode == ColorMode.RGBA ? 4 : 3);
+                glController.texSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, colorMode == ColorMode.RGBA ? DefaultGlController.GL_RGBA : DefaultGlController.GL_RGB, 5121, MemoryUtil.memAddress(byteBuffer));
 
                 glController.bindTexture(0);
 
@@ -197,6 +200,12 @@ public class GLTexture implements GlTex {
         }
     }
 
+    private void applyFilter(boolean smoothing) {
+        int filter = smoothing ? GL11.GL_LINEAR : GL11.GL_NEAREST;
+        glController.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, filter);
+        glController.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, filter);
+    }
+
     /**
      * Removes the texture from video memory and returns null.
      * Use this for times when the texture is no longer needed to free up some video memory.
@@ -238,28 +247,31 @@ public class GLTexture implements GlTex {
      * @param path   Paths to the image file.
      * @param pathMode   Select how the image path will be treated: inside the jar file or outside.
      * @param colorMode    Image color mode.
+     * @param smoothing    Enable texture smoothing or not.
      */
-    public static GLTexture fromPath(String path, PathMode pathMode, ColorMode colorMode) {
-        return new GLTexture()._fromPath(path, pathMode, colorMode);
+    public static GLTexture fromPath(String path, PathMode pathMode, ColorMode colorMode, boolean smoothing) {
+        return new GLTexture()._fromPath(path, pathMode, colorMode, smoothing);
     }
 
     /**
      * Loads an image into the texture using the specified BufferedImage.
      *
      * @param bufferedImage   BufferedImage that will be loaded into the texture.
+     * @param smoothing    Enable texture smoothing or not.
      */
-    public static GLTexture fromBufferedImage(BufferedImage bufferedImage) {
-        return new GLTexture()._fromBufferedImage(bufferedImage);
+    public static GLTexture fromBufferedImage(BufferedImage bufferedImage, boolean smoothing) {
+        return new GLTexture()._fromBufferedImage(bufferedImage, smoothing);
     }
 
     /**
      * Loads an image into the texture using the specified URL link.
      *
      * @param url   URL link to the image that will be loaded into the texture.
+     * @param smoothing    Enable texture smoothing or not.
      */
-    public static GLTexture fromURL(URL url) {
+    public static GLTexture fromURL(URL url, boolean smoothing) {
         try {
-            return new GLTexture()._fromBufferedImage(ImageIO.read(url));
+            return new GLTexture()._fromBufferedImage(ImageIO.read(url), smoothing);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -271,9 +283,10 @@ public class GLTexture implements GlTex {
      *
      * @param stream   Image InputStream.
      * @param colorMode    Image color mode.
+     * @param smoothing    Enable texture smoothing or not.
      */
-    public static GLTexture fromInputStream(InputStream stream, ColorMode colorMode) {
-        return new GLTexture()._fromInputStream(stream, colorMode);
+    public static GLTexture fromInputStream(InputStream stream, ColorMode colorMode, boolean smoothing) {
+        return new GLTexture()._fromInputStream(stream, colorMode, smoothing);
     }
 
     public enum ColorMode {
