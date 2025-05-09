@@ -1,11 +1,19 @@
 plugins {
-    id 'java'
+    id 'java-library'
+    id 'maven-publish'
 }
 
 project.ext.lwjglVersion = "3.3.3"
 
 group = 'com.ferra13671'
 version = '1.4'
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+    withSourcesJar()
+}
 
 repositories {
     mavenCentral()
@@ -26,4 +34,25 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.ferra13671'
+            artifactId = 'gl-texture-utils'
+            artifact source: jar, classifier: null
+            artifact sourcesJar
+        }
+    }
+
+    repositories {
+        mavenLocal()
+        maven {
+            name = "GithubPackages"
+            url = new URI("https://maven.pkg.github.com/Ferra13671/gl-texture-utils")
+            credentials.username = System.getenv("GITHUB_ACTOR")
+            credentials.password = System.getenv("GITHUB_TOKEN")
+        }
+    }
 }
