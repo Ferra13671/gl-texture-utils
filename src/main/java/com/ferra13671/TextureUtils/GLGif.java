@@ -1,5 +1,6 @@
 package com.ferra13671.TextureUtils;
 
+import com.ferra13671.TextureUtils.GifUtils.GifData;
 import com.ferra13671.TextureUtils.GifUtils.GifUtils;
 
 import javax.imageio.ImageIO;
@@ -15,7 +16,7 @@ import java.util.List;
 
 /**
  * @author Ferra13671
- * @LastUpdate 1.4
+ * @LastUpdate 1.5
  */
 
 public class GLGif implements GlTex {
@@ -26,17 +27,14 @@ public class GLGif implements GlTex {
     private GLTexture currentTexture;
 
 
-    protected void _fromInputStream(InputStream inputStream, DecompileMode decompileMode, int updateDelayMillis) throws IOException {
-        this.updateDelayMillis = updateDelayMillis;
+    protected void _fromInputStream(InputStream inputStream, DecompileMode decompileMode) throws IOException {
         lastTime = System.currentTimeMillis();
-        List<BufferedImage> images;
         ImageInputStream iis = ImageIO.createImageInputStream(inputStream);
-        if (decompileMode == DecompileMode.DELTAS) images = GifUtils.decompileDeltas(iis);
-        else images = GifUtils.decompileFull(iis);
+        GifData gifData = decompileMode == DecompileMode.DELTAS ? GifUtils.decompileDeltas(iis) : GifUtils.decompileFull(iis);
+        updateDelayMillis = gifData.updateDelay;
 
-        for (BufferedImage bufferedImage : images) {
-            textures.add(GLTexture.fromBufferedImage(bufferedImage, false));
-        }
+        for (BufferedImage bufferedImage : gifData.images)
+            textures.add(GLTexture.fromBufferedImage(bufferedImage, TextureFiltering.DEFAULT, TextureWrapping.DEFAULT));
         iterator = textures.iterator();
     }
 
@@ -89,20 +87,20 @@ public class GLGif implements GlTex {
         this.updateDelayMillis = updateDelayMillis;
     }
 
-    public static GLGif fromFile(File file, DecompileMode decompileMode, int updateDelayMillis) {
+    public static GLGif fromFile(File file, DecompileMode decompileMode) {
         try {
             GLGif glGif = new GLGif();
-            glGif._fromInputStream(Files.newInputStream(file.toPath()), decompileMode, updateDelayMillis);
+            glGif._fromInputStream(Files.newInputStream(file.toPath()), decompileMode);
             return glGif;
         } catch (IOException e) {
             return null;
         }
     }
 
-    public static GLGif fromInputStream(InputStream inputStream, DecompileMode decompileMode, int updateDelayMillis) {
+    public static GLGif fromInputStream(InputStream inputStream, DecompileMode decompileMode) {
         try {
             GLGif glGif = new GLGif();
-            glGif._fromInputStream(inputStream, decompileMode, updateDelayMillis);
+            glGif._fromInputStream(inputStream, decompileMode);
             return glGif;
         } catch (IOException e) {
             return null;
