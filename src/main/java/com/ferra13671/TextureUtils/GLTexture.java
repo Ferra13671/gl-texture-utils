@@ -24,14 +24,14 @@ import static org.lwjgl.stb.STBImage.nstbi_image_free;
 
 /**
  * @author Ferra13671
- * @LastUpdate 1.5
+ * @LastUpdate 1.5.1
  */
 
 public class GLTexture implements GlTex {
-    private int texId;
+    protected int texId;
 
-    private int width;
-    private int height;
+    protected int width;
+    protected int height;
 
     protected GLTexture() {
         GLTextureSystem.ALL_TEXTURES.add(this);
