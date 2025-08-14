@@ -1,11 +1,13 @@
 package com.ferra13671.TextureUtils;
 
+import com.ferra13671.TextureUtils.texture.GLTexture;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Ferra13671
- * @LastUpdate 1.2
+ * @LastUpdate 1.6
  */
 
 public class TextureStorage {

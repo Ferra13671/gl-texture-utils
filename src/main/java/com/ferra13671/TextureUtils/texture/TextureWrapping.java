@@ -1,10 +1,10 @@
-package com.ferra13671.TextureUtils;
+package com.ferra13671.TextureUtils.texture;
 
 import org.lwjgl.opengl.GL11;
 
 /**
  * @author Ferra13671
- * @LastUpdate 1.5
+ * @LastUpdate 1.6
  */
 
 public enum TextureWrapping {

@@ -8,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Ferra13671
- * @LastUpdate 1.3
+ * @LastUpdate 1.6
  */
 
 public class GLTextureSystem {
@@ -24,6 +24,18 @@ public class GLTextureSystem {
 
     public static void setGlController(GlController controller) {
         glController = controller;
+    }
+
+    public static GlController getGlController() {
+        return glController;
+    }
+
+    public static void addTexture(GlTex texture) {
+        ALL_TEXTURES.add(texture);
+    }
+
+    public static void removeTexture(GlTex texture) {
+        ALL_TEXTURES.remove(texture);
     }
 
     public static void close() {
